@@ -1,7 +1,8 @@
 int main(){
-	int a;
-	int b;
-	int c[10];
-	a=5;
-	a++;
+int i;
+
+for(i=0;i<4;i++){
+
 }
+
+};
