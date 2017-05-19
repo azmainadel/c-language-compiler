@@ -57,9 +57,9 @@ Grammar
    28 statement: var_declaration
    29          | expression_statement
 
-   30 $@2: %empty
+   30 @2: %empty
 
-   31 statement: $@2 compound_statement
+   31 statement: @2 compound_statement
    32          | FOR LPAREN expression_statement expression_statement expression RPAREN statement
    33          | IF LPAREN expression RPAREN statement
    34          | IF LPAREN expression RPAREN statement ELSE statement
@@ -186,7 +186,7 @@ statements (54)
 statement (55)
     on left: 28 29 31 32 33 34 35 36 37 38, on right: 26 27 32 33 34
     35
-$@2 (56)
+@2 (56)
     on left: 30, on right: 31
 expression_statement (57)
     on left: 39 40, on right: 29 32
@@ -536,13 +536,13 @@ State 33
     RETURN       shift, and go to state 49
     PRINTLN      shift, and go to state 50
 
-    $default  reduce using rule 30 ($@2)
+    $default  reduce using rule 30 (@2)
 
     var_declaration       go to state 51
     type_specifier        go to state 52
     statements            go to state 53
     statement             go to state 54
-    $@2                   go to state 55
+    @2                    go to state 55
     expression_statement  go to state 56
     variable              go to state 57
     expression            go to state 58
@@ -770,12 +770,12 @@ State 53
     RETURN       shift, and go to state 49
     PRINTLN      shift, and go to state 50
 
-    $default  reduce using rule 30 ($@2)
+    $default  reduce using rule 30 (@2)
 
     var_declaration       go to state 51
     type_specifier        go to state 52
     statement             go to state 79
-    $@2                   go to state 55
+    @2                    go to state 55
     expression_statement  go to state 56
     variable              go to state 57
     expression            go to state 58
@@ -796,7 +796,7 @@ State 54
 
 State 55
 
-   31 statement: $@2 . compound_statement
+   31 statement: @2 . compound_statement
 
     LCURL  shift, and go to state 33
 
@@ -1080,7 +1080,7 @@ State 79
 
 State 80
 
-   31 statement: $@2 compound_statement .
+   31 statement: @2 compound_statement .
 
     $default  reduce using rule 31 (statement)
 
@@ -1397,12 +1397,12 @@ State 108
     RETURN       shift, and go to state 49
     PRINTLN      shift, and go to state 50
 
-    $default  reduce using rule 30 ($@2)
+    $default  reduce using rule 30 (@2)
 
     var_declaration       go to state 51
     type_specifier        go to state 52
     statement             go to state 113
-    $@2                   go to state 55
+    @2                    go to state 55
     expression_statement  go to state 56
     variable              go to state 57
     expression            go to state 58
@@ -1457,12 +1457,12 @@ State 110
     RETURN       shift, and go to state 49
     PRINTLN      shift, and go to state 50
 
-    $default  reduce using rule 30 ($@2)
+    $default  reduce using rule 30 (@2)
 
     var_declaration       go to state 51
     type_specifier        go to state 52
     statement             go to state 115
-    $@2                   go to state 55
+    @2                    go to state 55
     expression_statement  go to state 56
     variable              go to state 57
     expression            go to state 58
@@ -1540,12 +1540,12 @@ State 117
     RETURN       shift, and go to state 49
     PRINTLN      shift, and go to state 50
 
-    $default  reduce using rule 30 ($@2)
+    $default  reduce using rule 30 (@2)
 
     var_declaration       go to state 51
     type_specifier        go to state 52
     statement             go to state 119
-    $@2                   go to state 55
+    @2                    go to state 55
     expression_statement  go to state 56
     variable              go to state 57
     expression            go to state 58
@@ -1578,12 +1578,12 @@ State 118
     RETURN       shift, and go to state 49
     PRINTLN      shift, and go to state 50
 
-    $default  reduce using rule 30 ($@2)
+    $default  reduce using rule 30 (@2)
 
     var_declaration       go to state 51
     type_specifier        go to state 52
     statement             go to state 120
-    $@2                   go to state 55
+    @2                    go to state 55
     expression_statement  go to state 56
     variable              go to state 57
     expression            go to state 58

@@ -31,8 +31,12 @@
     FILE *logo;
     FILE *error;
 
+    ofstream asmO;
+
     vector<string>list;
     vector<string>name;
+
+    string forData = "";
 
     int labelCount=0;
     int tempCount=0;
@@ -77,9 +81,20 @@
 
 %%
 
-start : program
-{
+start : program {
+    fprintf(logo,"\nLine no %d : start : program\n",line_count);
+    fprintf(logo,"\nTotal Lines: %d\n",line_count-1);
+    fprintf(logo,"\nTotal Errors: %d\n",error_count);
 
+    string s = "";
+    s += ".MODEL SMALL\n\n.STACK 100H\n\n.DATA\n";
+    s += toData;
+    s += "\n.CODE\nMAIN PROC\n";
+    s += "MOV AX, @DATA\nMOV DS, AX\n";
+    s += $1->code;
+    s += "MAIN ENDP\nEND MAIN";
+
+    asmO<<s;
 }
 ;
 
@@ -87,13 +102,11 @@ start : program
 
 
 
-program : program unit
-{
+program : program unit {
     fprintf(logo,"\nLine no %d : program : program unit\n",line_count);
 }
 |
-unit
-{
+unit {
     fprintf(logo,"\nLine no %d : program : unit\n",line_count);
 }
 ;
@@ -116,6 +129,7 @@ func_declaration
 func_definition
 {
     fprintf(logo,"\nLine no %d : unit : func_definition\n",line_count);
+    $$=$1;
 }
 ;
 
@@ -198,6 +212,7 @@ func_definition : type_specifier ID LPAREN parameter_list RPAREN {
             sp1->setName(sp->param_name[i]);
             sp1->setType("ID");
             sp1->var_type = sp->param_list[i];
+
             if (sp->getName() != ""){
                 if (table->Insert(sp1) == false){
                     yyerror("Multiple definition of"+sp->getName());
@@ -211,6 +226,8 @@ func_definition : type_specifier ID LPAREN parameter_list RPAREN {
 compound_statement
 {
     fprintf(logo,"\nLine no %d : func_definition : type_specifier ID LPAREN parameter_list RPAREN compound_statement\n%s\n",line_count, $2->getName().c_str());
+    /*cout<<$7->code;*/
+    $$=$7;
 
 }
 ;
@@ -221,6 +238,7 @@ compound_statement
 
 parameter_list  : parameters {
     fprintf(logo,"\nLine no %d : parameter_list  : parameters\n",line_count);
+    $$=$1;
 }
 | {
     fprintf(logo,"\nLine no %d : parameter_list  :\n",line_count);
@@ -242,7 +260,6 @@ parameters  : parameters COMMA type_specifier ID {
         error_count++;
     }
 }
-
 | parameters COMMA type_specifier {
     fprintf(logo,"\nLine no %d : parameters  : parameters COMMA type_specifier\n",line_count);
     if (type != "VOID"){
@@ -254,7 +271,6 @@ parameters  : parameters COMMA type_specifier ID {
         error_count++;
     }
 }
-
 | type_specifier ID {
     fprintf(logo,"\nLine no %d : parameters  : type_specifier ID\n%s\n",line_count,$2->getName().c_str());
 
@@ -267,7 +283,6 @@ parameters  : parameters COMMA type_specifier ID {
         error_count++;
     }
 }
-
 | type_specifier {
     fprintf(logo,"\nLine no %d : parameters  : type_specifier\n",line_count);
 
@@ -289,6 +304,8 @@ parameters  : parameters COMMA type_specifier ID {
 compound_statement : LCURL statements RCURL {
     fprintf(logo,"\nLine no %d : compound_statement : LCURL statements RCURL\n",line_count);
     table->ExitScope();
+
+    $$=$2;
 }
 | LCURL RCURL {
     fprintf(logo,"\nLine no %d : compound_statement : LCURL RCURL\n",line_count);
@@ -302,7 +319,6 @@ compound_statement : LCURL statements RCURL {
 
 var_declaration : type_specifier declaration_list SEMICOLON {
     fprintf(logo,"\nLine no %d : var_declaration : type_specifier declaration_list SEMICOLON\n",line_count);
-    /*cout<<"CHECK"<<$2->symbol<<endl;*/
     $$=$2;
 }
 ;
@@ -340,7 +356,12 @@ declaration_list : declaration_list COMMA ID {
     fprintf(logo,"\nLine no %d : declaration_list : declaration_list COMMA ID\n%s\n",line_count,$3->getName().c_str());
     if (type != "VOID"){
         $3->var_type = type;
+
+        $$=$1;
+        $$->code += string($3->symbol)+" DW " + "?\n";
+
         if (table->Insert($3) == false){
+
             yyerror("Multiple Declaration of " + $3->getName());
             error_count++;
         }
@@ -354,13 +375,17 @@ declaration_list : declaration_list COMMA ID {
     fprintf(logo,"\nLine no %d : declaration_list : declaration_list COMMA ID LTHIRD CONST_INT RTHIRD\n%s\n",line_count,$3->getName().c_str());
 
     if (table->LookupCurr($3->getName()) != NULL) {
-        yyerror("Multiple Declaration of " + $3->getName()); 					error_count++;
+        yyerror("Multiple Declaration of " + $3->getName());
+        error_count++;
     }
     else if ($5->var_type == "FLOAT")  {
         yyerror("Array index must be of 'int' type");
         error_count++;
     }
-    else if($5->ival < 1) {yyerror("Invalid array size"); error_count++; 	}
+    else if($5->ival < 1) {
+        yyerror("Invalid array size");
+        error_count++;
+    }
     else {
         if (type != "VOID"){
             $3->var_type = type;
@@ -369,14 +394,24 @@ declaration_list : declaration_list COMMA ID {
             SymbolInfo *sp = table->Lookup($3->getName());
             sp->arr = new SymbolInfo[$5->ival];
             sp->a_size = $5->ival;
+
+            $$=$1;
+            $$->code += (string)$3->symbol + " DW ";
+
             for (int i = 0; i < $5->ival; i++){
                 if (type == "INT") sp->arr[i].ival = -1;
                 else sp->arr[i].fval = -1.0;
                 sp->arr[i].var_type = type;
                 sp->arr[i].setType("ID");
+
+                $$->code += "? ";
             }
+            $$->code += "\n";
         }
-        else{ yyerror("Variable can not be of void type"); error_count++;}
+        else{
+            yyerror("Variable can not be of void type");
+            error_count++;
+        }
     }
 }
 | ID {
@@ -393,9 +428,12 @@ declaration_list : declaration_list COMMA ID {
         error_count++;
     }
     $$ = $1;
+    $$ = new SymbolInfo();
+    $$->code = string($1->symbol)+" DW " + "?\n";
 }
 | ID LTHIRD CONST_INT RTHIRD {
     fprintf(logo,"\nLine no %d : declaration_list : ID LTHIRD CONST_INT RTHIRD\n%s\n",line_count,$1->getName().c_str());
+
     if (table->LookupCurr($1->getName()) != NULL) {
         yyerror("Multiple Declaration of " + $1->getName());
         error_count++;
@@ -416,29 +454,25 @@ declaration_list : declaration_list COMMA ID {
             SymbolInfo *sp = table->Lookup($1->getName());
             sp->arr = new SymbolInfo[$3->ival];
             sp->a_size = $3->ival;
+
+            $$=$1;
+            $$->code = (string)$1->symbol +" DW ";
+
             for (int i = 0; i < $3->ival; i++){
                 if (type == "INT") sp->arr[i].ival = -1;
                 else sp->arr[i].fval = -1.0;
                 sp->arr[i].var_type = type;
                 sp->arr[i].setType("ID");
+
+                $$->code += "? ";
             }
+            $$->code += "\n";
         }
         else{
             yyerror("Variable can not be of void type");
-            error_count++;}
+            error_count++;
         }
     }
-    ;
-
-
-
-
-
-statements : statement {
-    fprintf(logo,"\nLine no %d : statements : statement\n",line_count);
-}
-| statements statement {
-    fprintf(logo,"\nLine no %d : statements : statements statement\n",line_count);
 }
 ;
 
@@ -446,274 +480,307 @@ statements : statement {
 
 
 
-    statement : var_declaration {
-        fprintf(logo,"\nLine no %d : statement : var_declaration\n",line_count);
-        $$=$1;
+statements : statement {
+    fprintf(logo,"\nLine no %d : statements : statement\n",line_count);
+    $$=$1;
+}
+| statements statement {
+    fprintf(logo,"\nLine no %d : statements : statements statement\n",line_count);
+    $$=$1;
+    $$->code += $2->code;
+}
+;
+
+
+
+
+
+statement : var_declaration {
+    fprintf(logo,"\nLine no %d : statement : var_declaration\n",line_count);
+    $$=$1;
+}
+| expression_statement {
+    fprintf(logo,"\nLine no %d : statement : expression_statement\n",line_count);
+    $$=$1;
+}
+| {table->EnterScope(table->len);} compound_statement {
+    fprintf(logo,"\nLine no %d : statement : compound_statement\n",line_count);
+    $$=$1;
+}
+| FOR LPAREN expression_statement expression_statement expression RPAREN statement{
+    fprintf(logo,"\nLine no %d : statement : FOR LPAREN expression_statement expression_statement expression RPAREN statement\n",line_count);
+    //BISHAL KAJ
+}
+| IF LPAREN expression RPAREN statement %prec LOWER_THAN_ELSE {
+    fprintf(logo,"\nLine no %d : statement : IF LPAREN expression RPAREN statement\n",line_count);
+}
+| IF LPAREN expression RPAREN statement ELSE statement {
+    fprintf(logo,"\nLine no %d : statement : IF LPAREN expression RPAREN statement ELSE statement\n",line_count);
+}
+| WHILE LPAREN expression RPAREN statement {
+    fprintf(logo,"\nLine no %d : statement : WHILE LPAREN expression RPAREN statement\n",line_count);
+}
+| PRINTLN LPAREN ID RPAREN SEMICOLON {
+    fprintf(logo,"\nLine no %d : statement : PRINTLN LPAREN ID RPAREN SEMICOLON\n%s\n",line_count,$3->getName().c_str());
+    SymbolInfo *sp = table->Lookup($3->getName());
+
+    if (sp == NULL) {
+        yyerror($3->getName() + " was not declared in this scope" );
+        error_count++;
     }
-    | expression_statement {
-        fprintf(logo,"\nLine no %d : statement : expression_statement\n",line_count);
-    }
-    | {table->EnterScope(table->len);} compound_statement {
-        fprintf(logo,"\nLine no %d : statement : compound_statement\n",line_count);
-    }
-    | FOR LPAREN expression_statement expression_statement expression RPAREN statement
-    {
-        fprintf(logo,"\nLine no %d : statement : FOR LPAREN expression_statement expression_statement expression RPAREN statement\n",line_count);
-    }
-    | IF LPAREN expression RPAREN statement %prec LOWER_THAN_ELSE {
-        fprintf(logo,"\nLine no %d : statement : IF LPAREN expression RPAREN statement\n",line_count);
-    }
-    | IF LPAREN expression RPAREN statement ELSE statement {
-        fprintf(logo,"\nLine no %d : statement : IF LPAREN expression RPAREN statement ELSE statement\n",line_count);
-    }
-    | WHILE LPAREN expression RPAREN statement {
-        fprintf(logo,"\nLine no %d : statement : WHILE LPAREN expression RPAREN statement\n",line_count);
-    }
-    | PRINTLN LPAREN ID RPAREN SEMICOLON {
-        fprintf(logo,"\nLine no %d : statement : PRINTLN LPAREN ID RPAREN SEMICOLON\n%s\n",line_count,$3->getName().c_str());
-        SymbolInfo *sp = table->Lookup($3->getName());
-
-        if (sp == NULL) {
-            yyerror($3->getName() + " was not declared in this scope" );
-            error_count++;}
-        }
-        | RETURN expression SEMICOLON {
-            fprintf(logo,"\nLine no %d : statement : RETURN expression SEMICOLON\n",line_count);
-            if (rtype != $2->var_type){
-                yyerror("Return type does not match");
-                error_count++;
-            }
-        }
-        | RETURN SEMICOLON error {fprintf(logo,"\nLine no %d : statement : RETURN SEMICOLON error\n",line_count);}
-        ;
-
-
-
-
-
-    expression_statement : SEMICOLON {
-        fprintf(logo,"\nLine no %d : expression_statement : SEMICOLON\n",line_count);
-    }
-    | expression SEMICOLON {
-        fprintf(logo,"\nLine no %d : expression_statement : SEMICOLON\n",line_count);
-        $$ = $1;
-    }
-    ;
-
-
-
-
-
-    variable : ID 	{
-        fprintf(logo,"\nLine no %d : variable : ID\n%s\n",line_count,$1->getName().c_str());
-        SymbolInfo* sp = table->Lookup($1->getName().c_str());
-
-        if (sp != NULL) $$ = $1;
-        else{
-            $$ = NULL;
-            yyerror("Undeclared Variable "+$1->getName());
-            error_count++;
-        }
-    }
-    | ID LTHIRD expression RTHIRD  {
-        fprintf(logo,"\nLine no %d : variable : ID LTHIRD expression RTHIRD\n%s\n",line_count,$1->getName().c_str());
-        SymbolInfo* sp = table->Lookup($1->getName().c_str());
-        //$$ = NULL;
-        if(sp == NULL){
-            yyerror("Undeclared Variable "+$1->getName());
-            error_count++;
-        }
-        else if(sp->a_size == -1){
-            yyerror("Index on non-array");
-            error_count++;
-        }
-        else if($3->var_type == "FLOAT"){
-            yyerror("Array index must be of 'int' type");
-            error_count++;
-        }
-        else if($3->ival < 0 || $3->ival >= sp->a_size){
-            yyerror("Array index out of bound");
-            error_count++;
-        }
-        else $$ = &(sp->arr[$3->ival]);
-    }
-    ;
-
-
-
-
-
-    expression : logic_expression {
-        fprintf(logo,"\nLine no %d : expression : logic_expression\n",line_count);
-        $$ = $1;
-    }
-    | variable ASSIGNOP logic_expression {
-        fprintf(logo,"\nLine no %d : expression : variable ASSIGNOP logic_expression\n",line_count);
-        if ($1){
-            if ($1->var_type != $3->var_type){
-                yyerror("Type mismatch");
-                error_count++;
-            }
-            else if ($1->a_size == 0){
-                yyerror($1->getName()+" is not a variable");
-                error_count++;
-            }
-            else if ($1->a_size > 0 ){
-                yyerror("No index on array"); error_count++;
-            }
-            else if ($1->getName() == "" && $3->var_type == "INT"){
-                $1->ival = $3->ival;
-            }
-            else if ($1->getName() == "" && $3->var_type == "FLOAT"){
-                $1->fval = $3->fval;
-            }
-            else if ($1->var_type == "INT" && $3->var_type == "INT"){
-                $1->ival = $3->ival;
-            }
-            else if ($1->var_type == "FLOAT" && $3->var_type == "FLOAT"){
-                $1->fval = $3->fval;
-            }
-            $$ = $1;
-        }
-        cout<<"-----------------------------------"<<endl;
-        table->PrintAllScopeTable();
-        cout<<"-----------------------------------"<<endl;
-
-        $$->code += "MOV AX, " + $3->symbol + " \n";
-        $$->code += "MOV " + $1->symbol+", AX\n";
-
-        /*cout<<$$->code<<" "<<$1->symbol<<"  "<<$3->symbol<<endl;*/
-    }
-    ;
-
-
-
-
-
-    logic_expression : rel_expression {
-        fprintf(logo,"\nLine no %d : logic_expression : rel_expression\n",line_count);
-        $$ = $1;
-    }
-    | rel_expression LOGICOP rel_expression {
-        fprintf(logo,"\nLine no %d : logic_expression : rel_expression LOGICOP rel_expression\n",line_count);
+    else{
         $$ = new SymbolInfo();
-        $$->var_type = "INT";
-
-        if ($1->var_type == "INT" && $3->var_type == "INT"){
-            if ($2->getName() == "&&") $$->ival = $1->ival && $3->ival;
-            else $$->ival = $1->ival || $3->ival;
-        }
-        else if ($1->var_type == "FLOAT" && $3->var_type == "INT"){
-            if ($2->getName() == "&&") $$->ival = $1->fval && $3->ival;
-            else $$->ival = $1->fval || $3->ival;
-        }
-        else if ($1->var_type == "INT" && $3->var_type == "FLOAT"){
-            if ($2->getName() == "&&") $$->ival = $1->ival && $3->fval;
-            else $$->ival = $1->ival || $3->fval;
-        }
-        else{
-            if ($2->getName() == "&&") $$->ival = $1->fval && $3->fval;
-            else $$->ival = $1->fval || $3->fval;
-        }
+        $$->code += "MOV DX, " + $3->symbol + "\nMOV AH, 2\nINT 21H\n";
     }
-    ;
+
+    /*cout<<$$->code;*/
+}
+| RETURN expression SEMICOLON {
+    fprintf(logo,"\nLine no %d : statement : RETURN expression SEMICOLON\n",line_count);
+    if (rtype != $2->var_type){
+        yyerror("Return type does not match");
+        error_count++;
+    }
+}
+| RETURN SEMICOLON error {
+    fprintf(logo,"\nLine no %d : statement : RETURN SEMICOLON error\n",line_count);
+}
+;
 
 
 
 
 
-    rel_expression	: simple_expression {
-        fprintf(logo,"\nLine no %d : rel_expression : simple_expression\n",line_count);
+expression_statement : SEMICOLON {
+    fprintf(logo,"\nLine no %d : expression_statement : SEMICOLON\n",line_count);
+}
+| expression SEMICOLON {
+    fprintf(logo,"\nLine no %d : expression_statement : expression SEMICOLON\n",line_count);
+    $$ = $1;
+
+}
+;
+
+
+
+
+
+variable : ID 	{
+    fprintf(logo,"\nLine no %d : variable : ID\n%s\n",line_count,$1->getName().c_str());
+    SymbolInfo* sp = table->Lookup($1->getName().c_str());
+
+    if (sp != NULL) $$ = $1;
+    else{
+        $$ = NULL;
+        yyerror("Undeclared Variable "+$1->getName());
+        error_count++;
+    }
+}
+| ID LTHIRD expression RTHIRD  {
+    fprintf(logo,"\nLine no %d : variable : ID LTHIRD expression RTHIRD\n%s\n",line_count,$1->getName().c_str());
+    SymbolInfo* sp = table->Lookup($1->getName().c_str());
+
+    if(sp == NULL){
+        yyerror("Undeclared Variable "+$1->getName());
+        error_count++;
+    }
+    else if(sp->a_size == -1){
+        yyerror("Index on non-array");
+        error_count++;
+    }
+    else if($3->var_type == "FLOAT"){
+        yyerror("Array index must be of 'int' type");
+        error_count++;
+    }
+    else if($3->ival < 0 || $3->ival >= sp->a_size){
+        yyerror("Array index out of bound");
+        error_count++;
+    }
+    else{
         $$ = $1;
-    }
-    | simple_expression RELOP simple_expression {
-        fprintf(logo,"\nLine no %d : rel_expression : simple_expression RELOP simple_expression\n",line_count);
+        $$ = &(sp->arr[$3->ival]);
         $$ = new SymbolInfo();
-        $$->setType($1->getType());
-        $$->var_type = "INT";
+        $$->code = $3->code+"MOV BX, " + $3->symbol + "\nADD BX, BX\n";
 
-        if ($1->var_type == "INT" && $3->var_type == "INT"){
-            if ($2->getName() == "<") $$->ival = $1->ival < $3->ival;
-            else if ($2->getName() == ">") $$->ival = $1->ival > $3->ival;
-            else if ($2->getName() == ">=") $$->ival = $1->ival >= $3->ival;
-            else if ($2->getName() == "<=") $$->ival = $1->ival <= $3->ival;
-            else if ($2->getName() == "==") $$->ival = $1->ival == $3->ival;
-            else $$->ival = $1->ival != $3->ival;
-        }
-        else if ($1->var_type == "FLOAT" && $3->var_type == "INT"){
-            if ($2->getName() == "<") $$->ival = $1->fval < $3->ival;
-            else if ($2->getName() == ">") $$->ival = $1->fval > $3->ival;
-            else if ($2->getName() == ">=") $$->ival = $1->fval >= $3->ival;
-            else if ($2->getName() == "<=") $$->ival = $1->fval <= $3->ival;
-            else if ($2->getName() == "==") $$->ival = $1->fval == $3->ival;
-            else $$->ival = $1->fval != $3->ival;
-        }
-        else if ($1->var_type == "INT" && $3->var_type == "FLOAT"){
-            if ($2->getName() == "<") $$->ival = $1->ival < $3->fval;
-            else if ($2->getName() == ">") $$->ival = $1->ival > $3->fval;
-            else if ($2->getName() == ">=") $$->ival = $1->ival >= $3->fval;
-            else if ($2->getName() == "<=") $$->ival = $1->ival <= $3->fval;
-            else if ($2->getName() == "==") $$->ival = $1->ival == $3->fval;
-            else $$->ival = $1->ival != $3->fval;
-        }
-        else{
-            if ($2->getName() == "<") $$->ival = $1->fval < $3->fval;
-            else if ($2->getName() == ">") $$->ival = $1->fval > $3->fval;
-            else if ($2->getName() == ">=") $$->ival = $1->fval >= $3->fval;
-            else if ($2->getName() == "<=") $$->ival = $1->fval <= $3->fval;
-            else if ($2->getName() == "==") $$->ival = $1->fval == $3->fval;
-            else $$->ival = $1->fval != $3->fval;
-        }
-    }
-    ;
-
-
-
-
-    simple_expression : term {
-        fprintf(logo,"\nLine no %d : simple_expression : term\n",line_count);
-        $$ = $1;
-    }
-    | simple_expression ADDOP term {
-        fprintf(logo,"\nLine no %d : simple_expression : simple_expression ADDOP term\n",line_count);
-        $$ = new SymbolInfo();
-        $$->setType($1->getType());
-
-        $$=$1;
-        $$->code += $3->code;
-
-        if($2->getName() == "+"){
-            char *temp = newTemp();
-            $$->code += "MOV AX, "+ $3->symbol + "\nADD AX, " + $1->symbol + "\nMOV "+ string(temp)+ ", AX\n";
-
-        }
-        else{
-            char *temp = newTemp();
-            $$->code += "MOV AX, "+ $1->symbol + "\nSUB AX, " + $3->symbol + "\nMOV "+ string(temp)+ ", AX\n";
-        }
-        delete $3;
         /*cout<<$$->code;*/
+    }
+}
+;
 
-        /*if ($1->var_type == "FLOAT" || $3->var_type == "FLOAT"){
-			$$->var_type = "FLOAT";
 
-            if ($1->var_type != "FLOAT" && $2->getName() == "+")
-            $$->fval = $1->ival + $3->fval;
-            else if ($2->var_type != "FLOAT" && $2->getName() == "+")
-            $$->fval = $1->fval + $3->ival;
-            else if ($1->var_type != "FLOAT" && $2->getName() == "-")
-            $$->fval = $1->ival - $3->fval;
-            else if ($2->var_type != "FLOAT" && $2->getName() == "-")
-            $$->fval = $1->fval - $3->ival;
+
+
+
+expression : logic_expression {
+    fprintf(logo,"\nLine no %d : expression : logic_expression\n",line_count);
+    $$ = $1;
+}
+| variable ASSIGNOP logic_expression {
+    fprintf(logo,"\nLine no %d : expression : variable ASSIGNOP logic_expression\n",line_count);
+    if ($1){
+        if ($1->var_type != $3->var_type){
+            yyerror("Type not matched");
+            error_count++;
         }
-        else {
-            $$->var_type = "INT";
-            if ($2->getName() == "+")
-            $$->ival = $1->ival + $3->ival;
-            else $$->ival = $1->ival - $3->ival;
-        }*/
+        else if ($1->a_size == 0){
+            yyerror($1->getName() + " is not a variable");
+            error_count++;
+        }
+        else if ($1->a_size > 0 ){
+            yyerror("Index not in Array"); error_count++;
+        }
+        else if ($1->getName() == "" && $3->var_type == "INT"){
+            $1->ival = $3->ival;
+        }
+        else if ($1->getName() == "" && $3->var_type == "FLOAT"){
+            $1->fval = $3->fval;
+        }
+        else if ($1->var_type == "INT" && $3->var_type == "INT"){
+            $1->ival = $3->ival;
+        }
+        else if ($1->var_type == "FLOAT" && $3->var_type == "FLOAT"){
+            $1->fval = $3->fval;
+        }
+        $$ = $1;
+    }
+    table->PrintAllScopeTable();
+
+    $$->code += "MOV AX, " + $3->symbol + " \n";
+    $$->code += "MOV " + $1->symbol+", AX\n";
+
+
+}
+;
+
+
+
+
+//BHABTE HOBE
+logic_expression : rel_expression {
+    fprintf(logo,"\nLine no %d : logic_expression : rel_expression\n",line_count);
+    $$ = $1;
+}
+| rel_expression LOGICOP rel_expression {
+    fprintf(logo,"\nLine no %d : logic_expression : rel_expression LOGICOP rel_expression\n",line_count);
+    $$ = new SymbolInfo();
+
+    $$=$1;
+    $$->code += $3->code;
+
+    char* temp = newTemp();
+    char* label1 = newLabel();
+    char* label2 = newLabel();
+
+    if($2->getName() == "&&"){
+        $$->code += "MOV " + (string)temp + ", 1\n";
+        $$->code += "MOV AX," + $1->getName() + "\n";
+        $$->code += "CMP AX, 0\n";
+        $$->code += "JE " + (string)label1 + "\n";
+        $$->code += "MOV AX, " + $3->getName() + "\n";
+        $$->code += "CMP AX, 0\n";
+        $$->code += "JNE " + (string)label2 + "\n";
+        $$->code += (string)label1 + ":\n";
+        $$->code += "MOV " + (string)temp + ", 0\n";
+        $$->code += (string)label2 + ":\n";
+        $$->symbol = (string)temp;
+    }
+    else if($2->getName() == "||"){
+        $$->code += "MOV " + (string)temp + ", 1\n";
+        $$->code += "MOV AX, " +$1->getName() + "\n";
+        $$->code += "CMP AX, 1\n";
+        $$->code += "JE "+ (string)label2 + "\n";
+        $$->code += "MOV AX, " + $3->getName() + "\n";
+        $$->code += "CMP AX, 1\n";
+        $$->code += "JE " + (string)label2 + "\n";
+        $$->code += (string)label1 + ":\n";
+        $$->code += "MOV " + (string)temp + ", 0\n";
+        $$->code += (string)label2 + ":\n";
+        $$->symbol = (string)temp;
+    }
+
+    cout<<$$->code;
+}
+;
+
+
+
+
+
+rel_expression	: simple_expression {
+    fprintf(logo,"\nLine no %d : rel_expression : simple_expression\n",line_count);
+    $$ = $1;
+}
+| simple_expression RELOP simple_expression {
+    fprintf(logo,"\nLine no %d : rel_expression : simple_expression RELOP simple_expression\n",line_count);
+    $$ = new SymbolInfo();
+    $$->setType($1->getType());
+    $$=$1;
+
+    $$->code += $3->code;
+    $$->code += "MOV AX, " + string($1->getName()) + "\n";
+    $$->code += "CMP AX, " + string($3->getName()) + "\n";
+
+    char *temp = newTemp();
+    char *label1 = newLabel();
+    char *label2 = newLabel();
+
+    if($2->getName() == "<"){
+        $$->code += "JL " + string(label1)+"\n";
+    }
+    else if($2->getName() == "<="){
+        $$->code += "JLE " + string(label1)+"\n";
+    }
+    else if($2->getName() == ">"){
+        $$->code += "JG " + string(label1)+"\n";
+    }
+    else if($2->getName() == ">="){
+        $$->code += "JNL " + string(label1)+"\n";
+    }
+    else if($2->getName() == "=="){
+        $$->code+="JE " + string(label1)+"\n";
+    }
+    else{
+        $$->code+="JNE " + string(label1)+"\n";
+    }
+
+    $$->code += "MOV "+ string(temp) + ", 0\n";
+    $$->code += "JMP " + string(label2) + "\n";
+    $$->code += string(label1) + ":\nMOV " + string(temp)+ ", 1\n";
+    $$->code += string(label2) + ":\n";
+    $$->symbol = temp;
+
+    /*cout<<$$->code;*/
+}
+;
+
+
+
+
+simple_expression : term {
+    fprintf(logo,"\nLine no %d : simple_expression : term\n",line_count);
+    $$ = $1;
+}
+| simple_expression ADDOP term {
+    fprintf(logo,"\nLine no %d : simple_expression : simple_expression ADDOP term\n",line_count);
+    $$ = new SymbolInfo();
+    $$->setType($1->getType());
+
+    $$=$1;
+    $$->code += $3->code;
+
+    if($2->getName() == "+"){
+        char *temp = newTemp();
+        $$->code += "MOV AX, "+ $3->symbol + "\nADD AX, " + $1->symbol + "\nMOV "+ string(temp)+ ", AX\n";
 
     }
+    else{
+        char *temp = newTemp();
+        $$->code += "MOV AX, "+ $1->symbol + "\nSUB AX, " + $3->symbol + "\nMOV "+ string(temp)+ ", AX\n";
+    }
+    delete $3;
+
+    /*cout<<$$->code;*/
+}
 ;
 
 
@@ -746,37 +813,8 @@ term :	unary_expression {
             $$->code += "XOR DX, DX\nDIV BX\nMOV "+ string(temp)+", DX\n";
         }
         $$->symbol = temp;
+
         /*cout<<$$->code;*/
-
-        /*if ($2->getName() == "%"){
-            if ($1->var_type == "FLOAT" || $3->var_type == "FLOAT"){
-                yyerror("Non-Integer operand on modulus operator");
-                error_count++;
-            }
-            else{
-                $$->ival = $1->ival % $3->ival;
-            }
-        }
-        else {
-            if ($1->var_type == "FLOAT" || $3->var_type == "FLOAT"){
-            $$->var_type = "FLOAT";
-
-            if ($1->var_type != "FLOAT" && $2->getName() == "*")
-            $$->fval = $1->ival * $3->fval;
-            else if ($2->var_type != "FLOAT" && $2->getName() == "*")
-            $$->fval = $1->fval * $3->ival;
-            else if ($1->var_type != "FLOAT" && $2->getName() == "/")
-            $$->fval = $1->ival / $3->fval;
-            else if ($2->var_type != "FLOAT" && $2->getName() == "/")
-            $$->fval = $1->fval / $3->ival;
-            }
-            else {
-                $$->var_type = "INT";
-                if ($2->getName() == "*")
-                $$->ival = $1->ival * $3->ival;
-                else $$->ival = $1->ival / $3->ival;
-            }
-        }*/
     }
 ;
 
@@ -948,6 +986,9 @@ int main(int argc,char *argv[])
     }
     logo = fopen("log.txt","w");
     error = fopen("error.txt","w");
+    /*asmOut = fopen("code.asm","w");*/
+
+    asmO.open("code.asm");
 
     yyin=fp;
     yyparse();
@@ -957,5 +998,6 @@ int main(int argc,char *argv[])
     fclose(fp);
     fclose(logo);
     fclose(error);
+    /*fclose(asmOut);*/
     return 0;
 }

@@ -95,7 +95,8 @@ STRING_ERR \"({STRCHAR}|{WHITESPACE})*{NEWLINE}
 			return CONTINUE;
 		}
 
-"println" { return PRINTLN;
+"println" {
+			return PRINTLN;
 		}
 
 {NEWLINE} { line_count++;

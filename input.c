@@ -1,6 +1,7 @@
 int main(){
-	int a, b;
-
-	a+b;
-	a-b;
+	int a;
+	int b;
+	int c[10];
+	a=5;
+	a++;
 }
