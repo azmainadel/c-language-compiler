@@ -679,7 +679,22 @@ statements : statement {
         $$ = new SymbolInfo();
         $$->setType($1->getType());
 
-        if ($1->var_type == "FLOAT" || $3->var_type == "FLOAT"){
+        $$=$1;
+        $$->code += $3->code;
+
+        if($2->getName() == "+"){
+            char *temp = newTemp();
+            $$->code += "MOV AX, "+ $3->symbol + "\nADD AX, " + $1->symbol + "\nMOV "+ string(temp)+ ", AX\n";
+
+        }
+        else{
+            char *temp = newTemp();
+            $$->code += "MOV AX, "+ $1->symbol + "\nSUB AX, " + $3->symbol + "\nMOV "+ string(temp)+ ", AX\n";
+        }
+        delete $3;
+        /*cout<<$$->code;*/
+
+        /*if ($1->var_type == "FLOAT" || $3->var_type == "FLOAT"){
 			$$->var_type = "FLOAT";
 
             if ($1->var_type != "FLOAT" && $2->getName() == "+")
@@ -696,9 +711,9 @@ statements : statement {
             if ($2->getName() == "+")
             $$->ival = $1->ival + $3->ival;
             else $$->ival = $1->ival - $3->ival;
-        }
+        }*/
 
-}
+    }
 ;
 
 
@@ -712,14 +727,35 @@ term :	unary_expression {
     |  term MULOP unary_expression {
         fprintf(logo,"\nLine no %d : term MULOP unary_expression\n",line_count);
         $$ = new SymbolInfo();
+        $$=$1;
 
-        if ($2->getName() == "%"){
+        $$->code += $3->code;
+        $$->code += "MOV AX, " + $1->symbol +"\n";
+        $$->code += "MOV BX, " + $3->symbol + "\n";
+
+        char *temp = newTemp();
+
+        if($2->getName() == "*"){
+            $$->code += "MUL BX\n";
+            $$->code += "MOV " + string(temp) + ", AX\n";
+        }
+        else if($2->getName() == "/"){
+            $$->code += "XOR DX, DX\nDIV BX\nMOV "+ string(temp)+", AX\n";
+        }
+        else{
+            $$->code += "XOR DX, DX\nDIV BX\nMOV "+ string(temp)+", DX\n";
+        }
+        $$->symbol = temp;
+        /*cout<<$$->code;*/
+
+        /*if ($2->getName() == "%"){
             if ($1->var_type == "FLOAT" || $3->var_type == "FLOAT"){
                 yyerror("Non-Integer operand on modulus operator");
                 error_count++;
             }
-            else
-            $$->ival = $1->ival % $3->ival;
+            else{
+                $$->ival = $1->ival % $3->ival;
+            }
         }
         else {
             if ($1->var_type == "FLOAT" || $3->var_type == "FLOAT"){
@@ -740,7 +776,7 @@ term :	unary_expression {
                 $$->ival = $1->ival * $3->ival;
                 else $$->ival = $1->ival / $3->ival;
             }
-        }
+        }*/
     }
 ;
 
@@ -783,7 +819,8 @@ unary_expression : ADDOP unary_expression  {
     char *temp=newTemp();
     $$->code="MOV AX, " + $2->symbol + "\n";
     $$->code+="NOT AX\n";
-    $$->code+="MOV "+string(temp)+", AX\n";
+    $$->code+="MOV "+ string(temp)+ ", AX\n";
+    $2->symbol = string(temp);
 
 }
 | factor {
@@ -800,7 +837,6 @@ unary_expression : ADDOP unary_expression  {
 factor	: variable {
     fprintf(logo,"\nLine no %d : factor : variable\n",line_count);
     $$ = $1;
-    /*`cout<<$$->symbol<<"CHECK FACTOR"<<endl;*/
 }
 | ID LPAREN argument_list RPAREN {
     SymbolInfo *sp = table->Lookup($1->getName());
