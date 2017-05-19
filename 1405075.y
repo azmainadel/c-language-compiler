@@ -115,7 +115,7 @@
         fprintf(logo,"\nLine no %d : func_declaration : type_specifier ID LPAREN parameter_list RPAREN SEMICOLON\n%s\n", line_count, $2->getName().c_str());
         $2->var_type = $1->getType();
         $2->a_size = 0;
-        
+
         if (table->Insert($2)){
             SymbolInfo *sp = table->Lookup($2->getName());
             if (sp->var_type == "INT") sp->ival = 10;
@@ -385,7 +385,6 @@
 
         statements : statement {
             fprintf(logo,"\nLine no %d : statements : statement\n",line_count);
-            /*cout<<"CHECK"<<$$->symbol<<endl;*/
         }
         | statements statement {
             fprintf(logo,"\nLine no %d : statements : statements statement\n",line_count);
@@ -395,7 +394,6 @@
         statement : var_declaration {
             fprintf(logo,"\nLine no %d : statement : var_declaration\n",line_count);
             $$=$1;
-            /*cout<<"CHECK "<<$$->symbol<<endl;*/
         }
         | expression_statement {
             fprintf(logo,"\nLine no %d : statement : expression_statement\n",line_count);
@@ -513,11 +511,10 @@
                 table->PrintAllScopeTable();
                 cout<<"-----------------------------------"<<endl;
 
-                $$->code+="MOV AX, "+$3->symbol+" \n";
-                $$->code += "MOV "+$1->symbol+", AX\n";
+                $$->code += "MOV AX, " + $3->symbol + " \n";
+                $$->code += "MOV " + $1->symbol+", AX\n";
 
-
-                cout<<$$->code<<" "<<$1->symbol<<"  "<<$3->symbol<<endl;
+                /*cout<<$$->code<<" "<<$1->symbol<<"  "<<$3->symbol<<endl;*/
             }
             ;
 
@@ -557,6 +554,7 @@
                 $$ = new SymbolInfo();
                 $$->setType($1->getType());
                 $$->var_type = "INT";
+
                 if ($1->var_type == "INT" && $3->var_type == "INT"){
                     if ($2->getName() == "<") $$->ival = $1->ival < $3->ival;
                     else if ($2->getName() == ">") $$->ival = $1->ival > $3->ival;
@@ -636,7 +634,9 @@
                 $$->ival = $1->ival % $3->ival;
             }
             else {
-                if ($1->var_type == "FLOAT" || $3->var_type == "FLOAT"){	  						$$->var_type = "FLOAT";
+                if ($1->var_type == "FLOAT" || $3->var_type == "FLOAT"){
+                $$->var_type = "FLOAT";
+
                 if ($1->var_type != "FLOAT" && $2->getName() == "*")
                 $$->fval = $1->ival * $3->fval;
                 else if ($2->var_type != "FLOAT" && $2->getName() == "*")
@@ -739,6 +739,8 @@
             else yyerror("");
             $$ = $1;
             fprintf(logo,"\nLine no %d : factor : variable INCOP\n",line_count);
+
+            $$->code += "INC " + $1->symbol + " \n";
         }
         | variable DECOP{
             SymbolInfo *sp = table->Lookup($1->getName());
@@ -755,6 +757,8 @@
             else yyerror("");
             $$ = $1;
             fprintf(logo,"\nLine no %d : factor : variable DECOP\n",line_count);
+
+            $$->code += "DEC " + $1->symbol + " \n";
         }
         ;
 

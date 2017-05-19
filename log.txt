@@ -8,6 +8,9 @@ Line no 2 : type_specifier : INT
 Line no 2 : declaration_list : ID
 a
 
+Line no 2 : declaration_list : declaration_list COMMA ID
+b
+
 Line no 2 : var_declaration : type_specifier declaration_list SEMICOLON
 
 Line no 2 : statement : var_declaration
@@ -38,15 +41,61 @@ Line no 3 : statement : expression_statement
 
 Line no 3 : statements : statements statement
 
-Line no 4 : compound_statement : LCURL statements RCURL
+Line no 4 : variable : ID
+a
 
-Line no 4 : func_definition : type_specifier ID LPAREN parameter_list RPAREN compound_statement
+Line no 4 : factor : variable DECOP
+
+Line no 4 : unary_expression : factor
+
+Line no 4 : term : unary_expression
+
+Line no 4 : simple_expression : term
+
+Line no 4 : rel_expression : simple_expression
+
+Line no 4 : logic_expression : rel_expression
+
+Line no 4 : expression : logic_expression
+
+Line no 4 : expression_statement : SEMICOLON
+
+Line no 4 : statement : expression_statement
+
+Line no 4 : statements : statements statement
+
+Line no 5 : variable : ID
+b
+
+Line no 5 : factor : variable INCOP
+
+Line no 5 : unary_expression : factor
+
+Line no 5 : term : unary_expression
+
+Line no 5 : simple_expression : term
+
+Line no 5 : rel_expression : simple_expression
+
+Line no 5 : logic_expression : rel_expression
+
+Line no 5 : expression : logic_expression
+
+Line no 5 : expression_statement : SEMICOLON
+
+Line no 5 : statement : expression_statement
+
+Line no 5 : statements : statements statement
+
+Line no 6 : compound_statement : LCURL statements RCURL
+
+Line no 6 : func_definition : type_specifier ID LPAREN parameter_list RPAREN compound_statement
 main
 
-Line no 4 : unit : func_definition
+Line no 6 : unit : func_definition
 
-Line no 4 : program : unit
+Line no 6 : program : unit
 
-Total Lines: 4
+Total Lines: 6
 
 Total Errors: 1

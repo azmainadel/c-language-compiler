@@ -553,13 +553,13 @@ static const yytype_uint8 yytranslate[] =
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_uint16 yyrline[] =
 {
-       0,    80,    80,    86,    91,    97,   102,   107,   113,   136,
-     136,   199,   202,   207,   218,   229,   241,   255,   259,   265,
-     272,   278,   284,   292,   306,   334,   349,   385,   389,   394,
-     399,   402,   402,   405,   409,   412,   415,   418,   425,   432,
-     435,   438,   444,   455,   479,   483,   523,   527,   550,   554,
-     594,   598,   622,   626,   658,   672,   680,   686,   691,   717,
-     719,   722,   725,   726,   742,   760,   763,   767,   771
+       0,    80,    80,    86,    91,    97,   102,   107,   113,   137,
+     137,   200,   203,   208,   219,   230,   242,   256,   260,   266,
+     273,   279,   285,   293,   307,   335,   350,   386,   389,   394,
+     398,   401,   401,   404,   408,   411,   414,   417,   424,   431,
+     434,   437,   443,   454,   478,   482,   521,   525,   548,   552,
+     593,   597,   621,   625,   659,   673,   681,   687,   692,   718,
+     720,   723,   726,   727,   746,   767,   770,   774,   778
 };
 #endif
 
@@ -1482,6 +1482,7 @@ yyreduce:
         fprintf(logo,"\nLine no %d : func_declaration : type_specifier ID LPAREN parameter_list RPAREN SEMICOLON\n%s\n", line_count, (yyvsp[-4])->getName().c_str());
         (yyvsp[-4])->var_type = (yyvsp[-5])->getType();
         (yyvsp[-4])->a_size = 0;
+
         if (table->Insert((yyvsp[-4]))){
             SymbolInfo *sp = table->Lookup((yyvsp[-4])->getName());
             if (sp->var_type == "INT") sp->ival = 10;
@@ -1498,11 +1499,11 @@ yyreduce:
             error_count++;
         }
     }
-#line 1502 "y.tab.c" /* yacc.c:1646  */
+#line 1503 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 9:
-#line 136 "1405075.y" /* yacc.c:1646  */
+#line 137 "1405075.y" /* yacc.c:1646  */
     {
         int flag = 0;
         SymbolInfo *sp = table->Lookup((yyvsp[-3])->getName());
@@ -1560,36 +1561,36 @@ yyreduce:
         }
         rtype = sp->var_type;
     }
-#line 1564 "y.tab.c" /* yacc.c:1646  */
+#line 1565 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 10:
-#line 194 "1405075.y" /* yacc.c:1646  */
+#line 195 "1405075.y" /* yacc.c:1646  */
     {
         fprintf(logo,"\nLine no %d : func_definition : type_specifier ID LPAREN parameter_list RPAREN compound_statement\n%s\n",line_count, (yyvsp[-5])->getName().c_str());
 
     }
-#line 1573 "y.tab.c" /* yacc.c:1646  */
+#line 1574 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 11:
-#line 199 "1405075.y" /* yacc.c:1646  */
+#line 200 "1405075.y" /* yacc.c:1646  */
     {
         fprintf(logo,"\nLine no %d : parameter_list  : parameters\n",line_count);
     }
-#line 1581 "y.tab.c" /* yacc.c:1646  */
+#line 1582 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 12:
-#line 202 "1405075.y" /* yacc.c:1646  */
+#line 203 "1405075.y" /* yacc.c:1646  */
     {
         fprintf(logo,"\nLine no %d : parameter_list  :\n",line_count);
     }
-#line 1589 "y.tab.c" /* yacc.c:1646  */
+#line 1590 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 13:
-#line 207 "1405075.y" /* yacc.c:1646  */
+#line 208 "1405075.y" /* yacc.c:1646  */
     {
         fprintf(logo,"\nLine no %d : parameters : parameters COMMA type_specifier ID\n%s\n",line_count,(yyvsp[0])->getName().c_str());
         if (type != "VOID"){
@@ -1601,11 +1602,11 @@ yyreduce:
             error_count++;
         }
     }
-#line 1605 "y.tab.c" /* yacc.c:1646  */
+#line 1606 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 14:
-#line 218 "1405075.y" /* yacc.c:1646  */
+#line 219 "1405075.y" /* yacc.c:1646  */
     {
         fprintf(logo,"\nLine no %d : parameters  : parameters COMMA type_specifier\n",line_count);
         if (type != "VOID"){
@@ -1617,11 +1618,11 @@ yyreduce:
             error_count++;
         }
     }
-#line 1621 "y.tab.c" /* yacc.c:1646  */
+#line 1622 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 15:
-#line 229 "1405075.y" /* yacc.c:1646  */
+#line 230 "1405075.y" /* yacc.c:1646  */
     {
         fprintf(logo,"\nLine no %d : parameters  : type_specifier ID\n%s\n",line_count,(yyvsp[0])->getName().c_str());
 
@@ -1634,11 +1635,11 @@ yyreduce:
             error_count++;
         }
     }
-#line 1638 "y.tab.c" /* yacc.c:1646  */
+#line 1639 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 16:
-#line 241 "1405075.y" /* yacc.c:1646  */
+#line 242 "1405075.y" /* yacc.c:1646  */
     {
         fprintf(logo,"\nLine no %d : parameters  : type_specifier\n",line_count);
 
@@ -1651,72 +1652,72 @@ yyreduce:
             error_count++;
         }
     }
-#line 1655 "y.tab.c" /* yacc.c:1646  */
+#line 1656 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 17:
-#line 255 "1405075.y" /* yacc.c:1646  */
+#line 256 "1405075.y" /* yacc.c:1646  */
     {
         fprintf(logo,"\nLine no %d : compound_statement : LCURL statements RCURL\n",line_count);
         table->ExitScope();
     }
-#line 1664 "y.tab.c" /* yacc.c:1646  */
+#line 1665 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 18:
-#line 259 "1405075.y" /* yacc.c:1646  */
+#line 260 "1405075.y" /* yacc.c:1646  */
     {
         fprintf(logo,"\nLine no %d : compound_statement : LCURL RCURL\n",line_count);
         table->ExitScope();
     }
-#line 1673 "y.tab.c" /* yacc.c:1646  */
+#line 1674 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 19:
-#line 265 "1405075.y" /* yacc.c:1646  */
+#line 266 "1405075.y" /* yacc.c:1646  */
     {
         fprintf(logo,"\nLine no %d : var_declaration : type_specifier declaration_list SEMICOLON\n",line_count);
         /*cout<<"CHECK"<<$2->symbol<<endl;*/
         (yyval)=(yyvsp[-1]);
     }
-#line 1683 "y.tab.c" /* yacc.c:1646  */
+#line 1684 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 20:
-#line 272 "1405075.y" /* yacc.c:1646  */
+#line 273 "1405075.y" /* yacc.c:1646  */
     {
         fprintf(logo,"\nLine no %d : type_specifier : INT\n",line_count);
         type = "INT";
         (yyval) = new SymbolInfo();
         (yyval)->setType("INT");
     }
-#line 1694 "y.tab.c" /* yacc.c:1646  */
+#line 1695 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 21:
-#line 278 "1405075.y" /* yacc.c:1646  */
+#line 279 "1405075.y" /* yacc.c:1646  */
     {
         fprintf(logo,"\nLine no %d : type_specifier : FLOAT\n",line_count);
         type = "FLOAT";
         (yyval) = new SymbolInfo();
         (yyval)->setType("FLOAT");
     }
-#line 1705 "y.tab.c" /* yacc.c:1646  */
+#line 1706 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 22:
-#line 284 "1405075.y" /* yacc.c:1646  */
+#line 285 "1405075.y" /* yacc.c:1646  */
     {
         fprintf(logo,"\nLine no %d : type_specifier : VOID\n",line_count);
         type = "VOID";
         (yyval) = new SymbolInfo();
         (yyval)->setType("VOID");
     }
-#line 1716 "y.tab.c" /* yacc.c:1646  */
+#line 1717 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 23:
-#line 292 "1405075.y" /* yacc.c:1646  */
+#line 293 "1405075.y" /* yacc.c:1646  */
     {
         fprintf(logo,"\nLine no %d : declaration_list : declaration_list COMMA ID\n%s\n",line_count,(yyvsp[0])->getName().c_str());
         if (type != "VOID"){
@@ -1731,11 +1732,11 @@ yyreduce:
             error_count++;
         }
     }
-#line 1735 "y.tab.c" /* yacc.c:1646  */
+#line 1736 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 24:
-#line 306 "1405075.y" /* yacc.c:1646  */
+#line 307 "1405075.y" /* yacc.c:1646  */
     {
         fprintf(logo,"\nLine no %d : declaration_list : declaration_list COMMA ID LTHIRD CONST_INT RTHIRD\n%s\n",line_count,(yyvsp[-3])->getName().c_str());
         if (table->LookupCurr((yyvsp[-3])->getName()) != NULL) {
@@ -1764,11 +1765,11 @@ yyreduce:
             else{ yyerror("Variable can not be of void type"); error_count++;}
         }
     }
-#line 1768 "y.tab.c" /* yacc.c:1646  */
+#line 1769 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 25:
-#line 334 "1405075.y" /* yacc.c:1646  */
+#line 335 "1405075.y" /* yacc.c:1646  */
     {
         fprintf(logo,"\nLine no %d : declaration_list : ID\n%s\n",line_count,(yyvsp[0])->getName().c_str());
         if (type != "VOID"){
@@ -1784,11 +1785,11 @@ yyreduce:
         }
         (yyval) = (yyvsp[0]);
     }
-#line 1788 "y.tab.c" /* yacc.c:1646  */
+#line 1789 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 26:
-#line 349 "1405075.y" /* yacc.c:1646  */
+#line 350 "1405075.y" /* yacc.c:1646  */
     {
         fprintf(logo,"\nLine no %d : declaration_list : ID LTHIRD CONST_INT RTHIRD\n%s\n",line_count,(yyvsp[-3])->getName().c_str());
         if (table->LookupCurr((yyvsp[-3])->getName()) != NULL) {
@@ -1823,14 +1824,13 @@ yyreduce:
                 error_count++;}
             }
         }
-#line 1827 "y.tab.c" /* yacc.c:1646  */
+#line 1828 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 27:
-#line 385 "1405075.y" /* yacc.c:1646  */
+#line 386 "1405075.y" /* yacc.c:1646  */
     {
             fprintf(logo,"\nLine no %d : statements : statement\n",line_count);
-            /*cout<<"CHECK"<<$$->symbol<<endl;*/
         }
 #line 1836 "y.tab.c" /* yacc.c:1646  */
     break;
@@ -1848,67 +1848,66 @@ yyreduce:
     {
             fprintf(logo,"\nLine no %d : statement : var_declaration\n",line_count);
             (yyval)=(yyvsp[0]);
-            /*cout<<"CHECK "<<$$->symbol<<endl;*/
         }
-#line 1854 "y.tab.c" /* yacc.c:1646  */
+#line 1853 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 30:
-#line 399 "1405075.y" /* yacc.c:1646  */
+#line 398 "1405075.y" /* yacc.c:1646  */
     {
             fprintf(logo,"\nLine no %d : statement : expression_statement\n",line_count);
         }
-#line 1862 "y.tab.c" /* yacc.c:1646  */
+#line 1861 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 31:
-#line 402 "1405075.y" /* yacc.c:1646  */
+#line 401 "1405075.y" /* yacc.c:1646  */
     {table->EnterScope(table->len);}
-#line 1868 "y.tab.c" /* yacc.c:1646  */
+#line 1867 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 32:
-#line 402 "1405075.y" /* yacc.c:1646  */
+#line 401 "1405075.y" /* yacc.c:1646  */
     {
             fprintf(logo,"\nLine no %d : statement : compound_statement\n",line_count);
         }
-#line 1876 "y.tab.c" /* yacc.c:1646  */
+#line 1875 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 33:
-#line 406 "1405075.y" /* yacc.c:1646  */
+#line 405 "1405075.y" /* yacc.c:1646  */
     {
             fprintf(logo,"\nLine no %d : statement : FOR LPAREN expression_statement expression_statement expression RPAREN statement\n",line_count);
         }
-#line 1884 "y.tab.c" /* yacc.c:1646  */
+#line 1883 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 34:
-#line 409 "1405075.y" /* yacc.c:1646  */
+#line 408 "1405075.y" /* yacc.c:1646  */
     {
             fprintf(logo,"\nLine no %d : statement : IF LPAREN expression RPAREN statement\n",line_count);
         }
-#line 1892 "y.tab.c" /* yacc.c:1646  */
+#line 1891 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 35:
-#line 412 "1405075.y" /* yacc.c:1646  */
+#line 411 "1405075.y" /* yacc.c:1646  */
     {
             fprintf(logo,"\nLine no %d : statement : IF LPAREN expression RPAREN statement ELSE statement\n",line_count);
         }
-#line 1900 "y.tab.c" /* yacc.c:1646  */
+#line 1899 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 36:
-#line 415 "1405075.y" /* yacc.c:1646  */
+#line 414 "1405075.y" /* yacc.c:1646  */
     {
             fprintf(logo,"\nLine no %d : statement : WHILE LPAREN expression RPAREN statement\n",line_count);
         }
-#line 1908 "y.tab.c" /* yacc.c:1646  */
+#line 1907 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 37:
-#line 418 "1405075.y" /* yacc.c:1646  */
+#line 417 "1405075.y" /* yacc.c:1646  */
     {
             fprintf(logo,"\nLine no %d : statement : PRINTLN LPAREN ID RPAREN SEMICOLON\n%s\n",line_count,(yyvsp[-2])->getName().c_str());
             SymbolInfo *sp = table->Lookup((yyvsp[-2])->getName());
@@ -1916,11 +1915,11 @@ yyreduce:
                 yyerror((yyvsp[-2])->getName() + " was not declared in this scope" );
                 error_count++;}
             }
-#line 1920 "y.tab.c" /* yacc.c:1646  */
+#line 1919 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 38:
-#line 425 "1405075.y" /* yacc.c:1646  */
+#line 424 "1405075.y" /* yacc.c:1646  */
     {
                 fprintf(logo,"\nLine no %d : statement : RETURN expression SEMICOLON\n",line_count);
                 if (rtype != (yyvsp[-1])->var_type){
@@ -1928,34 +1927,34 @@ yyreduce:
                     error_count++;
                 }
             }
-#line 1932 "y.tab.c" /* yacc.c:1646  */
+#line 1931 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 39:
-#line 432 "1405075.y" /* yacc.c:1646  */
+#line 431 "1405075.y" /* yacc.c:1646  */
     {fprintf(logo,"\nLine no %d : statement : RETURN SEMICOLON error\n",line_count);}
-#line 1938 "y.tab.c" /* yacc.c:1646  */
+#line 1937 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 40:
-#line 435 "1405075.y" /* yacc.c:1646  */
+#line 434 "1405075.y" /* yacc.c:1646  */
     {
                 fprintf(logo,"\nLine no %d : expression_statement : SEMICOLON\n",line_count);
             }
-#line 1946 "y.tab.c" /* yacc.c:1646  */
+#line 1945 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 41:
-#line 438 "1405075.y" /* yacc.c:1646  */
+#line 437 "1405075.y" /* yacc.c:1646  */
     {
                 fprintf(logo,"\nLine no %d : expression_statement : SEMICOLON\n",line_count);
                 (yyval) = (yyvsp[-1]);
             }
-#line 1955 "y.tab.c" /* yacc.c:1646  */
+#line 1954 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 42:
-#line 444 "1405075.y" /* yacc.c:1646  */
+#line 443 "1405075.y" /* yacc.c:1646  */
     {
                 fprintf(logo,"\nLine no %d : variable : ID\n%s\n",line_count,(yyvsp[0])->getName().c_str());
                 SymbolInfo* sp = table->Lookup((yyvsp[0])->getName().c_str());
@@ -1967,11 +1966,11 @@ yyreduce:
                     error_count++;
                 }
             }
-#line 1971 "y.tab.c" /* yacc.c:1646  */
+#line 1970 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 43:
-#line 455 "1405075.y" /* yacc.c:1646  */
+#line 454 "1405075.y" /* yacc.c:1646  */
     {
                 fprintf(logo,"\nLine no %d : variable : ID LTHIRD expression RTHIRD\n%s\n",line_count,(yyvsp[-3])->getName().c_str());
                 SymbolInfo* sp = table->Lookup((yyvsp[-3])->getName().c_str());
@@ -1994,20 +1993,20 @@ yyreduce:
                 }
                 else (yyval) = &(sp->arr[(yyvsp[-1])->ival]);
             }
-#line 1998 "y.tab.c" /* yacc.c:1646  */
+#line 1997 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 44:
-#line 479 "1405075.y" /* yacc.c:1646  */
+#line 478 "1405075.y" /* yacc.c:1646  */
     {
                 fprintf(logo,"\nLine no %d : expression : logic_expression\n",line_count);
                 (yyval) = (yyvsp[0]);
             }
-#line 2007 "y.tab.c" /* yacc.c:1646  */
+#line 2006 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 45:
-#line 483 "1405075.y" /* yacc.c:1646  */
+#line 482 "1405075.y" /* yacc.c:1646  */
     {
                 fprintf(logo,"\nLine no %d : expression : variable ASSIGNOP logic_expression\n",line_count);
                 if ((yyvsp[-2])){
@@ -2040,26 +2039,25 @@ yyreduce:
                 table->PrintAllScopeTable();
                 cout<<"-----------------------------------"<<endl;
 
-                (yyval)->code+="MOV AX, "+(yyvsp[0])->symbol+" \n";
-                (yyval)->code += "MOV "+(yyvsp[-2])->symbol+", AX\n";
+                (yyval)->code += "MOV AX, " + (yyvsp[0])->symbol + " \n";
+                (yyval)->code += "MOV " + (yyvsp[-2])->symbol+", AX\n";
 
-
-                cout<<(yyval)->code<<" "<<(yyvsp[-2])->symbol<<"  "<<(yyvsp[0])->symbol<<endl;
+                /*cout<<$$->code<<" "<<$1->symbol<<"  "<<$3->symbol<<endl;*/
             }
-#line 2050 "y.tab.c" /* yacc.c:1646  */
+#line 2048 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 46:
-#line 523 "1405075.y" /* yacc.c:1646  */
+#line 521 "1405075.y" /* yacc.c:1646  */
     {
                 fprintf(logo,"\nLine no %d : logic_expression : rel_expression\n",line_count);
                 (yyval) = (yyvsp[0]);
             }
-#line 2059 "y.tab.c" /* yacc.c:1646  */
+#line 2057 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 47:
-#line 527 "1405075.y" /* yacc.c:1646  */
+#line 525 "1405075.y" /* yacc.c:1646  */
     {
                 fprintf(logo,"\nLine no %d : logic_expression : rel_expression LOGICOP rel_expression\n",line_count);
                 (yyval) = new SymbolInfo();
@@ -2081,25 +2079,26 @@ yyreduce:
                     else (yyval)->ival = (yyvsp[-2])->fval || (yyvsp[0])->fval;
                 }
             }
-#line 2085 "y.tab.c" /* yacc.c:1646  */
+#line 2083 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 48:
-#line 550 "1405075.y" /* yacc.c:1646  */
+#line 548 "1405075.y" /* yacc.c:1646  */
     {
                 fprintf(logo,"\nLine no %d : rel_expression : simple_expression\n",line_count);
                 (yyval) = (yyvsp[0]);
             }
-#line 2094 "y.tab.c" /* yacc.c:1646  */
+#line 2092 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 49:
-#line 554 "1405075.y" /* yacc.c:1646  */
+#line 552 "1405075.y" /* yacc.c:1646  */
     {
                 fprintf(logo,"\nLine no %d : rel_expression : simple_expression RELOP simple_expression\n",line_count);
                 (yyval) = new SymbolInfo();
                 (yyval)->setType((yyvsp[-2])->getType());
                 (yyval)->var_type = "INT";
+
                 if ((yyvsp[-2])->var_type == "INT" && (yyvsp[0])->var_type == "INT"){
                     if ((yyvsp[-1])->getName() == "<") (yyval)->ival = (yyvsp[-2])->ival < (yyvsp[0])->ival;
                     else if ((yyvsp[-1])->getName() == ">") (yyval)->ival = (yyvsp[-2])->ival > (yyvsp[0])->ival;
@@ -2133,20 +2132,20 @@ yyreduce:
                     else (yyval)->ival = (yyvsp[-2])->fval != (yyvsp[0])->fval;
                 }
             }
-#line 2137 "y.tab.c" /* yacc.c:1646  */
+#line 2136 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 50:
-#line 594 "1405075.y" /* yacc.c:1646  */
+#line 593 "1405075.y" /* yacc.c:1646  */
     {
                 fprintf(logo,"\nLine no %d : simple_expression : term\n",line_count);
                 (yyval) = (yyvsp[0]);
             }
-#line 2146 "y.tab.c" /* yacc.c:1646  */
+#line 2145 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 51:
-#line 598 "1405075.y" /* yacc.c:1646  */
+#line 597 "1405075.y" /* yacc.c:1646  */
     {
                 fprintf(logo,"\nLine no %d : simple_expression : simple_expression ADDOP term\n",line_count);
                 (yyval) = new SymbolInfo();
@@ -2169,20 +2168,20 @@ yyreduce:
             }
 
         }
-#line 2173 "y.tab.c" /* yacc.c:1646  */
+#line 2172 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 52:
-#line 622 "1405075.y" /* yacc.c:1646  */
+#line 621 "1405075.y" /* yacc.c:1646  */
     {
             fprintf(logo,"\nLine no %d : term : unary_expression\n",line_count);
             (yyval) = (yyvsp[0]);
         }
-#line 2182 "y.tab.c" /* yacc.c:1646  */
+#line 2181 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 53:
-#line 626 "1405075.y" /* yacc.c:1646  */
+#line 625 "1405075.y" /* yacc.c:1646  */
     {
             fprintf(logo,"\nLine no %d : term MULOP unary_expression\n",line_count);
             (yyval) = new SymbolInfo();
@@ -2195,7 +2194,9 @@ yyreduce:
                 (yyval)->ival = (yyvsp[-2])->ival % (yyvsp[0])->ival;
             }
             else {
-                if ((yyvsp[-2])->var_type == "FLOAT" || (yyvsp[0])->var_type == "FLOAT"){	  						(yyval)->var_type = "FLOAT";
+                if ((yyvsp[-2])->var_type == "FLOAT" || (yyvsp[0])->var_type == "FLOAT"){
+                (yyval)->var_type = "FLOAT";
+
                 if ((yyvsp[-2])->var_type != "FLOAT" && (yyvsp[-1])->getName() == "*")
                 (yyval)->fval = (yyvsp[-2])->ival * (yyvsp[0])->fval;
                 else if ((yyvsp[-1])->var_type != "FLOAT" && (yyvsp[-1])->getName() == "*")
@@ -2213,11 +2214,11 @@ yyreduce:
             }
         }
     }
-#line 2217 "y.tab.c" /* yacc.c:1646  */
+#line 2218 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 54:
-#line 658 "1405075.y" /* yacc.c:1646  */
+#line 659 "1405075.y" /* yacc.c:1646  */
     {
         fprintf(logo,"\nLine no %d : unary_expression : ADDOP unary_expression\n",line_count);
         (yyval) = new SymbolInfo();
@@ -2232,11 +2233,11 @@ yyreduce:
             (yyval)->fval = -(yyvsp[0])->fval;
         }
     }
-#line 2236 "y.tab.c" /* yacc.c:1646  */
+#line 2237 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 55:
-#line 672 "1405075.y" /* yacc.c:1646  */
+#line 673 "1405075.y" /* yacc.c:1646  */
     {
         fprintf(logo,"\nLine no %d : unary_expression : NOT unary_expression\n",line_count);
         (yyval) = new SymbolInfo();
@@ -2245,30 +2246,30 @@ yyreduce:
         if ((yyvsp[0])->var_type == "INT") (yyval)->ival = !((yyvsp[0])->ival);
         else if ((yyvsp[0])->var_type == "FLOAT") (yyval)->ival = !((yyvsp[0])->fval);
     }
-#line 2249 "y.tab.c" /* yacc.c:1646  */
+#line 2250 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 56:
-#line 680 "1405075.y" /* yacc.c:1646  */
+#line 681 "1405075.y" /* yacc.c:1646  */
     {
         fprintf(logo,"\nLine no %d : unary_expression : factor\n",line_count);
         (yyval) = (yyvsp[0]);
     }
-#line 2258 "y.tab.c" /* yacc.c:1646  */
+#line 2259 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 57:
-#line 686 "1405075.y" /* yacc.c:1646  */
+#line 687 "1405075.y" /* yacc.c:1646  */
     {
         fprintf(logo,"\nLine no %d : factor : variable\n",line_count);
         (yyval) = (yyvsp[0]);
         cout<<(yyval)->symbol<<"CHECK FACTOR"<<endl;
     }
-#line 2268 "y.tab.c" /* yacc.c:1646  */
+#line 2269 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 58:
-#line 691 "1405075.y" /* yacc.c:1646  */
+#line 692 "1405075.y" /* yacc.c:1646  */
     {
         SymbolInfo *sp = table->Lookup((yyvsp[-3])->getName());
         if (sp == NULL) {yyerror("Undeclared Function "+(yyvsp[-3])->getName()); error_count++;}
@@ -2295,40 +2296,40 @@ yyreduce:
         }
         list.clear();
     }
-#line 2299 "y.tab.c" /* yacc.c:1646  */
+#line 2300 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 59:
-#line 717 "1405075.y" /* yacc.c:1646  */
+#line 718 "1405075.y" /* yacc.c:1646  */
     {
         fprintf(logo,"\nLine no %d : factor : LPAREN expression RPAREN\n",line_count); (yyval) = (yyvsp[-1]);}
-#line 2306 "y.tab.c" /* yacc.c:1646  */
+#line 2307 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 60:
-#line 719 "1405075.y" /* yacc.c:1646  */
+#line 720 "1405075.y" /* yacc.c:1646  */
     {
             fprintf(logo,"\nLine no %d : factor : CONST_INT\n%s\n",line_count,(yyvsp[0])->getName().c_str()); (yyval) = (yyvsp[0]);
         }
-#line 2314 "y.tab.c" /* yacc.c:1646  */
+#line 2315 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 61:
-#line 722 "1405075.y" /* yacc.c:1646  */
+#line 723 "1405075.y" /* yacc.c:1646  */
     {
             fprintf(logo,"\nLine no %d : factor : CONST_FLOAT\n%s\n",line_count,(yyvsp[0])->getName().c_str()); (yyval) = (yyvsp[0]);
         }
-#line 2322 "y.tab.c" /* yacc.c:1646  */
+#line 2323 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 62:
-#line 725 "1405075.y" /* yacc.c:1646  */
+#line 726 "1405075.y" /* yacc.c:1646  */
     {;}
-#line 2328 "y.tab.c" /* yacc.c:1646  */
+#line 2329 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 63:
-#line 726 "1405075.y" /* yacc.c:1646  */
+#line 727 "1405075.y" /* yacc.c:1646  */
     {
             SymbolInfo *sp = table->Lookup((yyvsp[-1])->getName());
             if (sp){
@@ -2344,12 +2345,15 @@ yyreduce:
             else yyerror("");
             (yyval) = (yyvsp[-1]);
             fprintf(logo,"\nLine no %d : factor : variable INCOP\n",line_count);
+
+            (yyval)->code += "INC " + (yyvsp[-1])->symbol + " \n";
+            cout<<(yyval)->code;
         }
-#line 2349 "y.tab.c" /* yacc.c:1646  */
+#line 2353 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 64:
-#line 742 "1405075.y" /* yacc.c:1646  */
+#line 746 "1405075.y" /* yacc.c:1646  */
     {
             SymbolInfo *sp = table->Lookup((yyvsp[-1])->getName());
             if (sp){
@@ -2365,46 +2369,49 @@ yyreduce:
             else yyerror("");
             (yyval) = (yyvsp[-1]);
             fprintf(logo,"\nLine no %d : factor : variable DECOP\n",line_count);
+
+            (yyval)->code += "DEC " + (yyvsp[-1])->symbol + " \n";
+            cout<<(yyval)->code;
         }
-#line 2370 "y.tab.c" /* yacc.c:1646  */
+#line 2377 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 65:
-#line 760 "1405075.y" /* yacc.c:1646  */
+#line 767 "1405075.y" /* yacc.c:1646  */
     {
             fprintf(logo,"\nLine no %d : argument_list : arguments\n",line_count);
         }
-#line 2378 "y.tab.c" /* yacc.c:1646  */
+#line 2385 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 66:
-#line 763 "1405075.y" /* yacc.c:1646  */
+#line 770 "1405075.y" /* yacc.c:1646  */
     {
             fprintf(logo,"\nLine no %d : argument_list : \n",line_count);
         }
-#line 2386 "y.tab.c" /* yacc.c:1646  */
+#line 2393 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 67:
-#line 767 "1405075.y" /* yacc.c:1646  */
+#line 774 "1405075.y" /* yacc.c:1646  */
     {
             fprintf(logo,"\nLine no %d : arguments : arguments COMMA logic_expression\n",line_count);
             list.push_back((yyvsp[0])->var_type);
         }
-#line 2395 "y.tab.c" /* yacc.c:1646  */
+#line 2402 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 68:
-#line 771 "1405075.y" /* yacc.c:1646  */
+#line 778 "1405075.y" /* yacc.c:1646  */
     {
             fprintf(logo,"\nLine no %d : arguments : logic_expression\n",line_count);
             list.push_back((yyvsp[0])->var_type);
         }
-#line 2404 "y.tab.c" /* yacc.c:1646  */
+#line 2411 "y.tab.c" /* yacc.c:1646  */
     break;
 
 
-#line 2408 "y.tab.c" /* yacc.c:1646  */
+#line 2415 "y.tab.c" /* yacc.c:1646  */
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -2632,7 +2639,7 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 778 "1405075.y" /* yacc.c:1906  */
+#line 785 "1405075.y" /* yacc.c:1906  */
 
         int main(int argc,char *argv[])
         {
