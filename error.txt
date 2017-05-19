@@ -1,4 +1,2 @@
 
 Error at Line 4 : Type not matched
-
-Error at Line 8 : syntax error, unexpected SEMICOLON, expecting $end

@@ -3,8 +3,8 @@
     #include<cstdlib>
     #include<cstring>
     #include<cmath>
-    #include <sstream>
-    #include "1405075.h"
+    #include<sstream>
+    #include"1405075.h"
     #define YYSTYPE SymbolInfo*
 
     using namespace std;
@@ -92,7 +92,7 @@ start : program {
     s += "\n.CODE\nMAIN PROC\n";
     s += "MOV AX, @DATA\nMOV DS, AX\n\n";
     s += $1->code;
-    s += "\nMAIN ENDP\nEND MAIN";
+    s += "\nMAIN ENDP\nEND MAIN\n";
 
     /*if(error_count == 0) asmO<<s;
     else cout<<"Errors Found."<<endl;*/
@@ -203,7 +203,7 @@ func_definition : type_specifier ID LPAREN parameter_list RPAREN {
         if (sp->var_type == "INT") sp->ival = 10;
         else if (sp->var_type == "FLOAT") sp->fval = 10.0;
         else sp->ival = 0;
-        
+
         for (int i = 0; i < list.size(); i++){
             sp->param_list.push_back(list[i]);
             sp->param_name.push_back(name[i]);
@@ -836,7 +836,7 @@ term :	unary_expression {
     $$ = $1;
     }
     |  term MULOP unary_expression {
-        fprintf(logo,"\nLine no %d : term MULOP unary_expression\n",line_count);
+        fprintf(flog,"\nLine no %d : term MULOP unary_expression\n",line_count);
         $$ = new SymbolInfo();
         $$=$1;
 
@@ -1073,9 +1073,27 @@ arguments  : arguments COMMA logic_expression {
 
 
 %%
+string command(string line){
+	int i = 0;
+	while(line[i] != ' ') i++;
+	return line.substr(0, i);
+}
+string destination(string line){
+	int i = 0;
+	while(line[i] != ' ') i++;
+	i++;
+	int j = i+1;
+	while(line[j] != ',' && j<line.size()) j++;
+	return line.substr(i, j-i);
+}
+string source(string line){
+	int i = 0;
+	while(line[i] != ',') i++;
+	i += 2;
+	return line.substr(i, line.size()-i);
+}
 
-int main(int argc,char *argv[])
-{
+int main(int argc,char *argv[]){
     FILE *fp;
     if((fp=fopen(argv[1],"r"))==NULL)
     {
@@ -1089,10 +1107,53 @@ int main(int argc,char *argv[])
 
     yyin=fp;
     yyparse();
+
     fprintf(flog,"\nTotal Lines: %d\n",line_count-1);
     fprintf(flog,"\nTotal Errors: %d\n",error_count);
 
+    asmO.close();
     fclose(fp);
     fclose(flog);
     fclose(error);
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    ifstream optIn;
+    ofstream optOut;
+    optIn.open("code.asm");
+    optOut.open("optimizedCode.asm");
+
+    string buffer = "";
+    string line = "";
+
+    while(!optIn.eof()){
+        getline(optIn, line);
+
+        if(line == "END MAIN") break;
+        if(line == "") continue;
+
+        if(command(line) == "ADD" || command(line) == "SUB"){
+            if(source(line) == "0") continue;
+        }
+        if(command(line) == "MUL" || command(line) == "DIV"){
+            if(destination(line) == "1") continue;
+        }
+
+        buffer = line;
+        getline(optIn, line);
+
+        if(command(line) == "MOV" && command(buffer) == "MOV"){
+            if(source(line) == destination(buffer) && source(buffer) == destination(line)){
+                cout<<"Unnecessary MOV found"<<endl;
+                continue;
+            }
+        }
+        optOut<<buffer<<endl;
+    }
+
+    optIn.close();
+    optOut.close();
+
+    return 0;
 }
