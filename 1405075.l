@@ -229,12 +229,14 @@ STRING_ERR \"({STRCHAR}|{WHITESPACE})*{NEWLINE}
 
 "+"|"-" {
 			SymbolInfo *s = new SymbolInfo(yytext, "ADDOP");
+			s->symbol = yytext;
 			yylval = s;
 			return ADDOP;
 		}
 
 "*"|"/"|"%" {
 			SymbolInfo *s = new SymbolInfo(yytext, "MULOP");
+			s->symbol = yytext;
 			yylval = s;
 			return MULOP;
 		}
@@ -248,6 +250,7 @@ STRING_ERR \"({STRCHAR}|{WHITESPACE})*{NEWLINE}
 
 "<"|"<="|">"|">="|"=="|"!=" {
 			SymbolInfo *s = new SymbolInfo(yytext, "RELOP");
+			s->symbol = yytext;
 			yylval = s;
 			return RELOP;
 		}
@@ -257,6 +260,7 @@ STRING_ERR \"({STRCHAR}|{WHITESPACE})*{NEWLINE}
 
 "&&"|"||" {
 			SymbolInfo *s = new SymbolInfo(yytext, "LOGICOP");
+			s->symbol = yytext;
 			yylval = s;
 			return LOGICOP;
 		}

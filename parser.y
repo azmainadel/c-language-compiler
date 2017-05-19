@@ -17,6 +17,7 @@ extern FILE *yyin;
 extern int line_count;
 extern int error;
 
+string data;
 
 int labelCount=0;
 int tempCount=0;

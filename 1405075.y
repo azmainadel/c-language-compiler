@@ -197,6 +197,7 @@
 
     }
     ;
+
     parameter_list  : parameters {
         fprintf(logo,"\nLine no %d : parameter_list  : parameters\n",line_count);
     }
@@ -216,6 +217,7 @@
             error_count++;
         }
     }
+
     | parameters COMMA type_specifier {
         fprintf(logo,"\nLine no %d : parameters  : parameters COMMA type_specifier\n",line_count);
         if (type != "VOID"){
@@ -227,6 +229,7 @@
             error_count++;
         }
     }
+
     | type_specifier ID {
         fprintf(logo,"\nLine no %d : parameters  : type_specifier ID\n%s\n",line_count,$2->getName().c_str());
 
@@ -239,6 +242,7 @@
             error_count++;
         }
     }
+
     | type_specifier {
         fprintf(logo,"\nLine no %d : parameters  : type_specifier\n",line_count);
 
@@ -431,7 +435,7 @@
             | RETURN SEMICOLON error {fprintf(logo,"\nLine no %d : statement : RETURN SEMICOLON error\n",line_count);}
             ;
 
-            expression_statement 	: SEMICOLON {
+            expression_statement : SEMICOLON {
                 fprintf(logo,"\nLine no %d : expression_statement : SEMICOLON\n",line_count);
             }
             | expression SEMICOLON {
@@ -526,6 +530,7 @@
                 fprintf(logo,"\nLine no %d : logic_expression : rel_expression LOGICOP rel_expression\n",line_count);
                 $$ = new SymbolInfo();
                 $$->var_type = "INT";
+
                 if ($1->var_type == "INT" && $3->var_type == "INT"){
                     if ($2->getName() == "&&") $$->ival = $1->ival && $3->ival;
                     else $$->ival = $1->ival || $3->ival;
@@ -625,6 +630,7 @@
         |  term MULOP unary_expression {
             fprintf(logo,"\nLine no %d : term MULOP unary_expression\n",line_count);
             $$ = new SymbolInfo();
+
             if ($2->getName() == "%"){
                 if ($1->var_type == "FLOAT" || $3->var_type == "FLOAT"){
                     yyerror("Non-Integer operand on modulus operator");
@@ -661,6 +667,9 @@
         $$ = new SymbolInfo();
         $$->setType($2->getType());
         $$->var_type = $2->var_type;
+
+        $$=$2;
+
         if ($1->getName() == "+"){
             $$->ival = $2->ival;
             $$->fval = $2->fval;
@@ -668,6 +677,12 @@
         else{
             $$->ival = -$2->ival;
             $$->fval = -$2->fval;
+
+            $$->code += "MOV AX, " + $2->symbol + " \n";
+            $$->code += "NEG AX\n";
+            $$->code += "MOV " + $2->symbol + ", AX\n";
+
+            cout<<$$->code;
         }
     }
     | NOT unary_expression  {
@@ -677,6 +692,13 @@
         $$->var_type = "INT";
         if ($2->var_type == "INT") $$->ival = !($2->ival);
         else if ($2->var_type == "FLOAT") $$->ival = !($2->fval);
+
+        $$=$2;
+        char *temp=newTemp();
+        $$->code="MOV AX, " + $2->symbol + "\n";
+        $$->code+="NOT AX\n";
+        $$->code+="MOV "+string(temp)+", AX\n";
+
     }
     | factor {
         fprintf(logo,"\nLine no %d : unary_expression : factor\n",line_count);
@@ -687,7 +709,7 @@
     factor	: variable {
         fprintf(logo,"\nLine no %d : factor : variable\n",line_count);
         $$ = $1;
-        cout<<$$->symbol<<"CHECK FACTOR"<<endl;
+        /*`cout<<$$->symbol<<"CHECK FACTOR"<<endl;*/
     }
     | ID LPAREN argument_list RPAREN {
         SymbolInfo *sp = table->Lookup($1->getName());
@@ -769,7 +791,7 @@
             fprintf(logo,"\nLine no %d : argument_list : \n",line_count);
         }
         ;
-        arguments     : arguments COMMA logic_expression {
+        arguments  : arguments COMMA logic_expression {
             fprintf(logo,"\nLine no %d : arguments : arguments COMMA logic_expression\n",line_count);
             list.push_back($3->var_type);
         }
@@ -796,6 +818,7 @@
             yyparse();
             fprintf(logo,"\nTotal Lines: %d\n",line_count-1);
             fprintf(logo,"\nTotal Errors: %d\n",error_count);
+
             fclose(fp);
             fclose(logo);
             fclose(error);

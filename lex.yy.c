@@ -1188,145 +1188,149 @@ YY_RULE_SETUP
 #line 230 "1405075.l"
 {
 			SymbolInfo *s = new SymbolInfo(yytext, "ADDOP");
+			s->symbol = yytext;
 			yylval = s;
 			return ADDOP;
 		}
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
-#line 236 "1405075.l"
+#line 237 "1405075.l"
 {
 			SymbolInfo *s = new SymbolInfo(yytext, "MULOP");
+			s->symbol = yytext;
 			yylval = s;
 			return MULOP;
 		}
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 242 "1405075.l"
+#line 244 "1405075.l"
 {
 			return INCOP;
 		}
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-#line 245 "1405075.l"
+#line 247 "1405075.l"
 {
 			return DECOP;
 		}
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-#line 249 "1405075.l"
+#line 251 "1405075.l"
 {
 			SymbolInfo *s = new SymbolInfo(yytext, "RELOP");
+			s->symbol = yytext;
 			yylval = s;
 			return RELOP;
 		}
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
-#line 254 "1405075.l"
+#line 257 "1405075.l"
 {
 			return ASSIGNOP;
 		}
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
-#line 258 "1405075.l"
+#line 261 "1405075.l"
 {
 			SymbolInfo *s = new SymbolInfo(yytext, "LOGICOP");
+			s->symbol = yytext;
 			yylval = s;
 			return LOGICOP;
 		}
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
-#line 264 "1405075.l"
+#line 268 "1405075.l"
 {
 			return NOT;
 		}
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
-#line 268 "1405075.l"
+#line 272 "1405075.l"
 {
 			return LPAREN;
 		}
 	YY_BREAK
 case 38:
 YY_RULE_SETUP
-#line 272 "1405075.l"
+#line 276 "1405075.l"
 {
 			return RPAREN;
 		}
 	YY_BREAK
 case 39:
 YY_RULE_SETUP
-#line 275 "1405075.l"
+#line 279 "1405075.l"
 {
 			return LCURL;
 		}
 	YY_BREAK
 case 40:
 YY_RULE_SETUP
-#line 279 "1405075.l"
+#line 283 "1405075.l"
 {
 			return RCURL;
 		}
 	YY_BREAK
 case 41:
 YY_RULE_SETUP
-#line 283 "1405075.l"
+#line 287 "1405075.l"
 {
 			return LTHIRD;
 		}
 	YY_BREAK
 case 42:
 YY_RULE_SETUP
-#line 287 "1405075.l"
+#line 291 "1405075.l"
 {
 			return RTHIRD;
 		}
 	YY_BREAK
 case 43:
 YY_RULE_SETUP
-#line 291 "1405075.l"
+#line 295 "1405075.l"
 {
 			return COMMA;
 		}
 	YY_BREAK
 case 44:
 YY_RULE_SETUP
-#line 295 "1405075.l"
+#line 299 "1405075.l"
 {
 			return SEMICOLON;
 		}
 	YY_BREAK
 case 45:
 YY_RULE_SETUP
-#line 299 "1405075.l"
+#line 303 "1405075.l"
 {}
 	YY_BREAK
 case 46:
 YY_RULE_SETUP
-#line 301 "1405075.l"
+#line 305 "1405075.l"
 {
 			error_count++;
  		}
 	YY_BREAK
 case YY_STATE_EOF(INITIAL):
-#line 304 "1405075.l"
+#line 308 "1405075.l"
 {
 			return 0;
 			}
 	YY_BREAK
 case 47:
 YY_RULE_SETUP
-#line 308 "1405075.l"
+#line 312 "1405075.l"
 ECHO;
 	YY_BREAK
-#line 1330 "lex.yy.c"
+#line 1334 "lex.yy.c"
 
 	case YY_END_OF_BUFFER:
 		{
@@ -2325,7 +2329,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 308 "1405075.l"
+#line 312 "1405075.l"
 
 
 
